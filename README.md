@@ -7,3 +7,8 @@ Automated rock classification from images using a CNN AI model.
 
 User-friendly GUI for image uploading and receiving classification results.
 
+Storage of classification logs including metadata for analytics.
+
+Administrator features for updating AI model and viewing usage analytics.
+
+Documentation access for 53 defined rock classes.
