@@ -12,3 +12,13 @@ Storage of classification logs including metadata for analytics.
 Administrator features for updating AI model and viewing usage analytics.
 
 Documentation access for 53 defined rock classes.
+
+
+System Architecture
+The system follows a 3-tier architecture:
+
+Presentation Tier: GUI user interface for image upload and results display.
+
+Logic Tier: Backend inference server running the AI model for rock classification.
+
+Data Tier: Persistent storage for rock image dataset, model checkpoints, and classification logs.
