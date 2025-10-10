@@ -1,24 +1,58 @@
 # CPE178P_E01_Project
 
-This project develops an automated, reliable system to support or replace manual rock classification by leveraging AI. It uses a Convolutional Neural Network (CNN) model trained on an image dataset to classify rocks automatically. The system consists of a classification server backend for inference and a simple graphical user interface (GUI) for uploading and classifying rock images. It aims to assist geologists, engineers, students, and environmental scientists by providing accurate and consistent rock identification, reducing the subjectivity and time consumption of manual classification.
+Installation and Setup
+Install Python 3.x and required AI libraries (TensorFlow or PyTorch).
 
-Features
-Automated rock classification from images using a CNN AI model.
+Setup backend inference server using FastAPI.
 
-User-friendly GUI for image uploading and receiving classification results.
+Deploy the frontend GUI for user interaction.
 
-Storage of classification logs including metadata for analytics.
+Prepare the rock image dataset for training and inference.
 
-Administrator features for updating AI model and viewing usage analytics.
+Configure persistent storage (database) for logs and metadata.
 
-Documentation access for 53 defined rock classes.
+Usage
+Upload a rock image in supported formats (e.g., JPG, PNG) via the GUI.
 
+The classification server processes the image using the trained AI model.
 
-System Architecture
-The system follows a 3-tier architecture:
+View the predicted rock type and corresponding confidence score.
 
-Presentation Tier: GUI user interface for image upload and results display.
+Access historical classification results and export logs if needed.
 
-Logic Tier: Backend inference server running the AI model for rock classification.
+Administrators can update the AI model and monitor analytics through dedicated interfaces.
 
-Data Tier: Persistent storage for rock image dataset, model checkpoints, and classification logs.
+Project Structure
+/backend - FastAPI server code and AI model integration.
+
+/frontend - GUI user interface code.
+
+/dataset - Cleaned and organized rock image dataset.
+
+/model - Trained AI model checkpoints.
+
+/docs - Project documentation and rock class information.
+
+Team Members
+Gino Andre Jimenez
+
+Gemry Somido
+
+Jomari Tamson
+
+John David Villota
+
+Contribution Guidelines
+Use feature branches for development.
+
+Submit pull requests for code review before merging.
+
+Follow coding standards and document new features.
+
+Report issues and propose enhancements via GitHub issues.
+
+License
+This project is licensed under [Specify License Here].
+
+Acknowledgments
+This project was developed as part of the requirements for the CPE178P course at Mapa University, School of Electrical, Electronics, and Computer Engineering.
