@@ -55,4 +55,4 @@ License
 This project is licensed under [Specify License Here].
 
 Acknowledgments
-This project was developed as part of the requirements for the CPE178P course at Mapa University, School of Electrical, Electronics, and Computer Engineering.
+This project was developed as part of the requirements for the CPE178P course at Mapua University, School of Electrical, Electronics, and Computer Engineering.
