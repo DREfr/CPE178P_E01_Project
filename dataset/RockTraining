@@ -50,3 +50,25 @@ def create_dataset(data_path, batch_size=32, training=True):
 # Load datasets
 dataset_train = create_dataset(train_data_path, training=True)
 dataset_val = create_dataset(val_data_path, training=False)
+
+Step 2	Visualize the dataset.
+The return value of the training dataset loaded from the create_dataset API is a dictionary. You can use the create_dict_iterator API to create a data iterator and use next to iteratively access the dataset. Here, batch_size is set to 18. Therefore, you can use next to obtain 18 images and label data at a time
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Map labels to class names (only the 12 classes you are using)
+rock_classes = ["Basalt", "Chert", "Coal", "Gneiss", "Granite", 
+                "Limestone", "Marble", "Obsidian", "Pumice", 
+                "Sandstone", "Slate", "Travertine"]
+
+# Fetch one batch of data
+data = next(dataset_train.create_dict_iterator())
+images, labels = data["image"], data["label"]
+
+print("Tensor of images:", images.shape)
+print("Labels:", labels.asnumpy())
+
+# Mean and std used in normalization (undo for display)
+mean = np.array([0.485, 0.456, 0.406])
+std = np.array([0.229, 0.224, 0.225])
