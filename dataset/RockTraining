@@ -72,3 +72,22 @@ print("Labels:", labels.asnumpy())
 # Mean and std used in normalization (undo for display)
 mean = np.array([0.485, 0.456, 0.406])
 std = np.array([0.229, 0.224, 0.225])
+
+# Display a sample grid (first 18 images or less)
+num_to_show = min(18, images.shape[0])
+plt.figure(figsize=(15, 8))
+
+for i in range(num_to_show):
+    img = images[i].asnumpy()
+    img = np.transpose(img, (1, 2, 0))  # CHW -> HWC
+    img = std * img + mean  # denormalize
+    img = np.clip(img, 0, 1)  # clip to [0,1] for matplotlib
+    label_idx = int(labels[i].asnumpy())
+
+    plt.subplot(3, 6, i + 1)
+    plt.imshow(img)
+    plt.title(rock_classes[label_idx], fontsize=8)
+    plt.axis("off")
+
+plt.tight_layout()
+plt.show()
