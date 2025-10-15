@@ -1,0 +1,27 @@
+import mindspore.dataset as ds
+import mindspore.dataset.vision.c_transforms as CV
+from mindspore import dtype as mstype
+
+# Paths for your dataset folders
+train_data_path = 'rocks_train'
+val_data_path = 'rocks_val'
+
+# Only the selected 12 rock classes
+rock_classes = ["Basalt", "Chert", "Coal", "Gneiss", "Granite", 
+                "Limestone", "Marble", "Obsidian", "Pumice", 
+                "Sandstone", "Slate", "Travertine"]
+
+# Automatically assign class indexes
+class_indexing = {name: idx for idx, name in enumerate(rock_classes)}
+
+def create_dataset(data_path, batch_size=32, training=True):
+    """Define the rock classification dataset with only 12 classes."""
+
+    data_set = ds.ImageFolderDataset(data_path, num_parallel_workers=8, shuffle=True,
+                                     class_indexing=class_indexing)
+
+    # Image normalization setup
+    image_size = 224
+    mean = [0.485 * 255, 0.456 * 255, 0.406 * 255]
+    std = [0.229 * 255, 0.224 * 255, 0.225 * 255]
+
