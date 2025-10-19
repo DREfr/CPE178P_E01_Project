@@ -2,6 +2,7 @@ import flet as ft
 import numpy as np
 from PIL import Image
 import io
+import random
 
 # --- Rock Classes ---
 ROCK_CLASSES = [
@@ -10,9 +11,24 @@ ROCK_CLASSES = [
     "Sandstone", "Slate", "Travertine"
 ]
 
-# Dummy model prediction (replace with your MindSpore inference later)
+# --- Rock Info Dictionary ---
+ROCK_INFO = {
+    "Basalt": "A dark, fine-grained volcanic rock formed from the rapid cooling of basaltic lava.",
+    "Chert": "A hard, fine-grained sedimentary rock composed mostly of microcrystalline quartz.",
+    "Coal": "A combustible black or brownish sedimentary rock formed from plant matter under pressure.",
+    "Gneiss": "A high-grade metamorphic rock with banded layers of light and dark minerals.",
+    "Granite": "A coarse-grained igneous rock composed mainly of quartz, feldspar, and mica.",
+    "Limestone": "A sedimentary rock composed mainly of calcium carbonate, often formed from marine organisms.",
+    "Marble": "A metamorphic rock formed when limestone is subjected to heat and pressure.",
+    "Obsidian": "A naturally occurring volcanic glass formed when lava cools rapidly.",
+    "Pumice": "A light, porous volcanic rock formed during explosive eruptions.",
+    "Sandstone": "A clastic sedimentary rock composed mainly of sand-sized mineral particles.",
+    "Slate": "A fine-grained metamorphic rock that splits easily into thin, durable sheets.",
+    "Travertine": "A form of limestone deposited by mineral springs, especially hot springs."
+}
+
+# --- Dummy Model Prediction (replace with MindSpore model later) ---
 def predict_rock_class(image_bytes):
-    import random
     return random.choice(ROCK_CLASSES)
 
 
@@ -25,15 +41,13 @@ def main(page: ft.Page):
     page.padding = 30
     page.scroll = ft.ScrollMode.AUTO
 
-    # --- Gradient Background (Radial: light grey -> grey) ---
-    # Center is a light grey and it fades to a medium grey at the edges.
-    # Customize `colors` (hex) and `stops` (0.0-1.0) to tweak the fade.
+    # --- Gradient Background (top to bottom) ---
     page.bgcolor = None
-    page.gradient = ft.RadialGradient(
-        center=ft.alignment.top_center,
-        radius=1.0,
-        colors=["#f3f4f6", "#d1d5db", "#9ca3af"],
-        stops=[0.0, 0.6, 1.0],
+    page.gradient = ft.LinearGradient(
+        begin=ft.alignment.top_center,
+        end=ft.alignment.bottom_center,
+        colors=["#e5e7eb", "#9ca3af", "#111827"],  # light → dark grey
+        stops=[0.0, 0.5, 1.0],
     )
 
     # --- Text Elements ---
@@ -129,7 +143,43 @@ def main(page: ft.Page):
         ),
     )
 
-    # --- Layout Directly on Background (no box) ---
+    # --- Info Button & Dialog ---
+    def show_info_dialog(e):
+        items = [
+            ft.Text(f"{rock}: {info}", color=ft.colors.WHITE, size=14)
+            for rock, info in ROCK_INFO.items()
+        ]
+        dialog = ft.AlertDialog(
+            title=ft.Text("Rock Class Information", color=ft.colors.WHITE),
+            content=ft.ListView(
+                controls=items,
+                spacing=10,
+                auto_scroll=True,
+                height=400
+            ),
+            bgcolor="#1f2937",  # dark grey
+            actions=[
+                ft.TextButton(
+                    "Close",
+                    on_click=lambda e: page.dialog.close(),
+                    style=ft.ButtonStyle(color=ft.colors.BLUE_300)
+                )
+            ]
+        )
+        page.dialog = dialog
+        dialog.open = True
+        page.update()
+
+    info_button = ft.ElevatedButton(
+        text="Learn About Rocks",
+        icon=ft.icons.INFO,
+        bgcolor=ft.colors.BLUE_700,
+        color=ft.colors.WHITE,
+        on_click=show_info_dialog,
+        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=12), elevation=6),
+    )
+
+    # --- Layout ---
     page.add(
         ft.Column(
             [
@@ -140,6 +190,7 @@ def main(page: ft.Page):
                 ft.Divider(height=15, color=ft.colors.TRANSPARENT),
                 upload_button,
                 classify_button,
+                info_button,
                 ft.Divider(height=15, color=ft.colors.TRANSPARENT),
                 prediction_text,
             ],
