@@ -1,58 +1,156 @@
-# CPE178P_E01_Project
+# 🪨 Rock Classification System
 
-Installation and Setup
-Install Python 3.x and required AI libraries (TensorFlow or PyTorch).
+**CPE178P – Foundations of Artificial Intelligence**
+**Mapúa University – Intramuros**
 
-Setup backend inference server using FastAPI.
+A desktop-based AI system for classifying rock images using **MobileNetV2** trained in **MindSpore**.
+It features a **Flet-powered frontend** and a **FastAPI + WebSocket backend**, enabling real-time predictions directly from your desktop.
 
-Deploy the frontend GUI for user interaction.
+---
 
-Prepare the rock image dataset for training and inference.
+## 🚀 Features
 
-Configure persistent storage (database) for logs and metadata.
+* Upload rock images directly from the GUI
+* Real-time prediction via WebSocket
+* MobileNetV2 model trained on 12 rock classes
+* Cross-platform support (Windows, Linux, macOS)
+* Clean and modern interface built with Flet
 
-Usage
-Upload a rock image in supported formats (e.g., JPG, PNG) via the GUI.
+Supported rock classes:
 
-The classification server processes the image using the trained AI model.
+> Basalt, Chert, Coal, Gneiss, Granite, Limestone, Marble, Obsidian, Pumice, Sandstone, Slate, Travertine
 
-View the predicted rock type and corresponding confidence score.
+---
 
-Access historical classification results and export logs if needed.
+## 🧩 System Overview
 
-Administrators can update the AI model and monitor analytics through dedicated interfaces.
+```
+[Flet Frontend]  ↔  [FastAPI WebSocket Backend]  ↔  [MindSpore MobileNetV2 Model]
+```
 
-Project Structure
-/backend - FastAPI server code and AI model integration.
+---
 
-/frontend - GUI user interface code.
+## 🛠️ Installation and Setup
 
-/dataset - Cleaned and organized rock image dataset.
+### 1️⃣ Clone the Repository
 
-/model - Trained AI model checkpoints.
+```bash
+git clone https://github.com/DREfr/CPE178P_E01_Project.git
+cd CPE178P_E01_Project
+```
 
-/docs - Project documentation and rock class information.
+### 2️⃣ Create and Activate a Virtual Environment
 
-Team Members
-Gino Andre Jimenez
+```bash
+python -m venv venv
+venv\Scripts\activate       # Windows
+source venv/bin/activate    # macOS/Linux
+```
 
-Gemry Somido
+### 3️⃣ Install Python Requirements
 
-Jomari Tamson
+Make sure you are using **Python 3.11**.
 
-John David Villota
+```bash
+pip install -r requirements.txt
+```
 
-Contribution Guidelines
-Use feature branches for development.
+---
 
-Submit pull requests for code review before merging.
+## 🧠 MindSpore Installation
 
-Follow coding standards and document new features.
+For all supported platforms (Windows / Linux / macOS):
 
-Report issues and propose enhancements via GitHub issues.
+```bash
+pip install mindspore==2.7.0 -i https://repo.mindspore.cn/pypi/simple --trusted-host repo.mindspore.cn --extra-index-url https://repo.huaweicloud.com/repository/pypi/simple
+```
 
-License
-This project is licensed under [Specify License Here].
+For more details, see the official MindSpore docs:
+👉 [https://www.mindspore.cn/install](https://www.mindspore.cn/install)
 
-Acknowledgments
-This project was developed as part of the requirements for the CPE178P course at Mapua University, School of Electrical, Electronics, and Computer Engineering.
+---
+
+## 📦 requirements.txt
+
+```
+fastapi
+uvicorn
+flet
+pillow
+numpy
+websockets
+```
+
+> ⚠️ MindSpore must be installed separately using the command above (it depends on your OS and hardware).
+
+---
+
+## 🧠 Model Setup
+
+Place your trained model checkpoint inside the `ckpt/` folder:
+
+```
+ckpt/mobilenet_v2-25_74.ckpt
+```
+
+Update `backend.py` if you use a different filename:
+
+```python
+param_dict = load_checkpoint("ckpt/mobilenet_v2-25_74.ckpt")
+```
+
+---
+
+## ▶️ Run the Application
+
+### 1️⃣ Start the Backend Server
+
+```bash
+uvicorn backend:app --host 0.0.0.0 --port 8000
+```
+
+### 2️⃣ Launch the Frontend
+
+```bash
+python frontend.py
+```
+
+### ✅ Done!
+
+Upload any rock image from the GUI, click **“Classify”**, and see the predicted rock type instantly.
+
+---
+
+## 📸 Interface Overview
+
+* Upload button → Choose a rock image
+* Image preview → Displays the selected image
+* “Classify” button → Sends to backend for prediction
+* Output text → Displays predicted rock type in real time
+
+---
+
+## 📚 Tech Stack
+
+| Component              | Technology                 |
+| ---------------------- | -------------------------- |
+| **Frontend**           | Flet (Python UI Framework) |
+| **Backend**            | FastAPI + WebSockets       |
+| **Model Framework**    | MindSpore 2.7.0            |
+| **Model Architecture** | MobileNetV2                |
+| **Python Version**     | 3.11                       |
+
+---
+
+## 👨‍💻 Developers
+
+Developed by:
+**DREfr** and Team – CPE178P (Foundations of Artificial Intelligence)
+Mapúa University – Intramuros
+
+GitHub Repository:
+🔗 [https://github.com/DREfr/CPE178P_E01_Project](https://github.com/DREfr/CPE178P_E01_Project)
+
+---
+
+
