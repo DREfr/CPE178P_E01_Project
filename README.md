@@ -13,8 +13,9 @@ It features a **Flet-powered frontend** and a **FastAPI + WebSocket backend**, e
 * Upload rock images directly from the GUI
 * Real-time prediction via WebSocket
 * MobileNetV2 model trained on 12 rock classes
-* Cross-platform support (Windows, Linux, macOS)
 * Clean and modern interface built with Flet
+
+⚠️ WINDOWS SUPPORT ONLY
 
 Supported rock classes:
 
