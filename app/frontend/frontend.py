@@ -50,102 +50,150 @@ def main(page: ft.Page):
     page.padding = 20
     page.scroll = ft.ScrollMode.AUTO
 
-    page.gradient = ft.RadialGradient(
-        center=ft.alignment.top_center,
-        radius=1.0,
-        colors=["#f3f4f6", "#d1d5db", "#9ca3af"],
-        stops=[0.0, 0.6, 1.0],
-    )
+    def show_login_page():
+        page.clean()
+        username = ft.TextField(label="Username", width=250)
+        password = ft.TextField(label="Password", width=250, password=True, can_reveal_password=True)
+        message = ft.Text("", color=ft.Colors.RED)
 
-    title = ft.Text("Rock Classification System", size=26, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE)
-    subtitle = ft.Text("Upload a rock image to identify its type", size=15, color=ft.Colors.GREY_300)
+        def on_login(e):
+            # Fake login, just switch pages
+            show_classify_page()
 
-    # Smaller image preview
-    img_preview = ft.Image(
-        visible=False,
-        width=250,
-        height=250,
-        fit=ft.ImageFit.CONTAIN,
-        border_radius=10,
-    )
+        def on_register(e):
+            show_register_page()
 
-    prediction_text = ft.Text("", size=20, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_300)
-    rock_info_text = ft.Text("", size=14, color=ft.Colors.GREY_800, text_align=ft.TextAlign.CENTER, width=450, italic=True)
+        login_btn = ft.ElevatedButton(text="Login", on_click=on_login, width=120)
+        register_btn = ft.TextButton(text="Register", on_click=on_register)
 
-    file_picker = ft.FilePicker()
-    selected_file_path = ft.Text("", visible=False)
-
-    def on_file_picked(e: ft.FilePickerResultEvent):
-        if e.files:
-            file = e.files[0]
-            selected_file_path.value = file.path
-            img_preview.src = file.path
-            img_preview.visible = True
-            prediction_text.value = ""
-            rock_info_text.value = ""
-            page.update()
-        else:
-            prediction_text.value = "No image selected."
-            prediction_text.color = ft.Colors.RED
-            page.update()
-
-    file_picker.on_result = on_file_picked
-    page.overlay.append(file_picker)
-
-    def classify_click(e):
-        if not selected_file_path.value:
-            prediction_text.value = "Please upload an image first!"
-            prediction_text.color = ft.Colors.RED
-            page.update()
-            return
-
-        async def classify_async():
-            try:
-                response = await send_prediction_request(selected_file_path.value)
-                if response.get("type") == "prediction":
-                    predicted_class = response.get("class", "Unknown")
-                    prediction_text.value = f"Predicted Rock Type: {predicted_class}"
-                    prediction_text.color = ft.Colors.BLUE_300
-                    rock_info_text.value = ROCK_INFO.get(predicted_class, "No description available.")
-                else:
-                    prediction_text.value = "Error: Invalid response"
-                    rock_info_text.value = ""
-            except Exception as ex:
-                prediction_text.value = f"Connection error: {ex}"
-                prediction_text.color = ft.Colors.RED
-                rock_info_text.value = ""
-            page.update()
-
-        asyncio.run(classify_async())
-
-    upload_button = ft.ElevatedButton(
-        text="Upload", icon=ft.Icons.UPLOAD_FILE, bgcolor=ft.Colors.BLUE_400,
-        color=ft.Colors.WHITE, on_click=lambda _: file_picker.pick_files(
-            allow_multiple=False, file_type=ft.FilePickerFileType.IMAGE
-        ), width=130, height=40
-    )
-
-    classify_button = ft.ElevatedButton(
-        text="Classify", icon=ft.Icons.SEARCH, bgcolor=ft.Colors.BLUE_600,
-        color=ft.Colors.WHITE, on_click=classify_click, width=130, height=40
-    )
-
-    page.add(
-        ft.Column(
-            [
-                title,
-                subtitle,
-                ft.Divider(height=20, color=ft.Colors.TRANSPARENT),
-                img_preview,
-                ft.Divider(height=15, color=ft.Colors.TRANSPARENT),
-                ft.Row([upload_button, classify_button], alignment=ft.MainAxisAlignment.CENTER, spacing=15),
-                ft.Divider(height=15, color=ft.Colors.TRANSPARENT),
-                prediction_text,
-                rock_info_text,
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        page.add(
+            ft.Column(
+                [
+                    ft.Text("Login to Rock Classification App", size=24, weight=ft.FontWeight.BOLD),
+                    username,
+                    password,
+                    ft.Row([login_btn, register_btn], alignment=ft.MainAxisAlignment.CENTER),
+                    message,
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            )
         )
-    )
+
+    def show_register_page():
+        page.clean()
+        ft.Toast("This is a sample register form (not functional yet)")
+        reg_user = ft.TextField(label="Create Username", width=250)
+        reg_pass = ft.TextField(label="Create Password", width=250, password=True, can_reveal_password=True)
+
+        def back_to_login(e):
+            show_login_page()
+
+        register_btn = ft.ElevatedButton(text="Register", on_click=lambda _: ft.Toast("Registration disabled"))
+        back_btn = ft.TextButton(text="Back to Login", on_click=back_to_login)
+
+        page.add(
+            ft.Column(
+                [
+                    ft.Text("Register New Account", size=24, weight=ft.FontWeight.BOLD),
+                    reg_user,
+                    reg_pass,
+                    ft.Row([register_btn, back_btn], alignment=ft.MainAxisAlignment.CENTER),
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            )
+        )
+
+    def show_classify_page():
+        page.clean()
+        title = ft.Text("Rock Classification System", size=26, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE)
+        subtitle = ft.Text("Upload a rock image to identify its type", size=15, color=ft.Colors.GREY_300)
+
+        img_preview = ft.Image(visible=False, width=250, height=250, fit=ft.ImageFit.CONTAIN, border_radius=10)
+        prediction_text = ft.Text("", size=20, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_300)
+        rock_info_text = ft.Text("", size=14, color=ft.Colors.GREY_800, text_align=ft.TextAlign.CENTER, width=450, italic=True)
+        file_picker = ft.FilePicker()
+        selected_file_path = ft.Text("", visible=False)
+
+        def on_file_picked(e: ft.FilePickerResultEvent):
+            if e.files:
+                file = e.files[0]
+                selected_file_path.value = file.path
+                img_preview.src = file.path
+                img_preview.visible = True
+                prediction_text.value = ""
+                rock_info_text.value = ""
+                page.update()
+            else:
+                prediction_text.value = "No image selected."
+                prediction_text.color = ft.Colors.RED
+                page.update()
+
+        file_picker.on_result = on_file_picked
+        page.overlay.append(file_picker)
+
+        def classify_click(e):
+            if not selected_file_path.value:
+                prediction_text.value = "Please upload an image first!"
+                prediction_text.color = ft.Colors.RED
+                page.update()
+                return
+
+            async def classify_async():
+                try:
+                    response = await send_prediction_request(selected_file_path.value)
+                    if response.get("type") == "prediction":
+                        predicted_class = response.get("class", "Unknown")
+                        prediction_text.value = f"Predicted Rock Type: {predicted_class}"
+                        prediction_text.color = ft.Colors.BLUE_300
+                        rock_info_text.value = ROCK_INFO.get(predicted_class, "No description available.")
+                    else:
+                        prediction_text.value = "Error: Invalid response"
+                        rock_info_text.value = ""
+                except Exception as ex:
+                    prediction_text.value = f"Connection error: {ex}"
+                    prediction_text.color = ft.Colors.RED
+                    rock_info_text.value = ""
+                page.update()
+
+            asyncio.run(classify_async())
+
+        upload_button = ft.ElevatedButton(
+            text="Upload", icon=ft.Icons.UPLOAD_FILE, bgcolor=ft.Colors.BLUE_400,
+            color=ft.Colors.WHITE, on_click=lambda _: file_picker.pick_files(
+                allow_multiple=False, file_type=ft.FilePickerFileType.IMAGE
+            ), width=130, height=40
+        )
+
+        classify_button = ft.ElevatedButton(
+            text="Classify", icon=ft.Icons.SEARCH, bgcolor=ft.Colors.BLUE_600,
+            color=ft.Colors.WHITE, on_click=classify_click, width=130, height=40
+        )
+
+        logout_button = ft.TextButton(text="Logout", on_click=lambda _: show_login_page())
+
+        page.add(
+            ft.Column(
+                [
+                    logout_button,
+                    title,
+                    subtitle,
+                    ft.Divider(height=20, color=ft.Colors.TRANSPARENT),
+                    img_preview,
+                    ft.Divider(height=15, color=ft.Colors.TRANSPARENT),
+                    ft.Row([upload_button, classify_button], alignment=ft.MainAxisAlignment.CENTER, spacing=15),
+                    ft.Divider(height=15, color=ft.Colors.TRANSPARENT),
+                    prediction_text,
+                    rock_info_text,
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            )
+        )
+
+    # Start at login page
+    show_login_page()
+
 
 ft.app(target=main)
