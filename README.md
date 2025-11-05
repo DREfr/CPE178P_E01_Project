@@ -45,7 +45,6 @@ cd CPE178P_E01_Project
 ```bash
 python -m venv venv
 venv\Scripts\activate       # Windows
-source venv/bin/activate    # macOS/Linux
 ```
 
 ### 3️⃣ Install Python Requirements
