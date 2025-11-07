@@ -123,11 +123,8 @@ def main(page: ft.Page):
             icon=ft.Icons.SWAP_HORIZ,
             bgcolor=ft.Colors.AMBER_600,
             color=ft.Colors.WHITE,
-            on_click=lambda _: file_picker.pick_files(
-                allow_multiple=False, 
-                file_type=ft.FilePickerFileType.CUSTOM, 
-                allowed_extensions=["ckpt"]
-            )
+            on_click=lambda _: file_picker.pick_files(allow_multiple=False, file_type=ft.FilePickerFileType.CUSTOM, allowed_extensions=["ckpt"])
+
         )
 
         logout_btn = ft.ElevatedButton(text="Logout", on_click=lambda _: show_login_page())
@@ -188,8 +185,7 @@ def main(page: ft.Page):
                     response = await send_prediction_request(selected_file_path.value)
                     if response.get("type") == "prediction":
                         predicted_class = response.get("class", "Unknown")
-                        confidence = response.get("confidence", 0)
-                        prediction_text.value = f"Predicted Rock Type: {predicted_class} ({confidence*100:.2f}%)"
+                        prediction_text.value = f"Predicted Rock Type: {predicted_class}"
                         prediction_text.color = ft.Colors.BLUE_300
                         rock_info_text.value = ROCK_INFO.get(predicted_class, "No description available.")
                     else:

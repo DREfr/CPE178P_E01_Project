@@ -1,6 +1,6 @@
 from fastapi import FastAPI, File, UploadFile, WebSocket, WebSocketDisconnect, Form
 import mindspore as ms
-from mindspore import Tensor, ops
+from mindspore import Tensor
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
 import json, base64, io
 from PIL import Image
@@ -35,6 +35,7 @@ def load_model(ckpt_path):
 # Load default model initially
 load_model(current_ckpt)
 
+
 # --- Preprocessing ---
 def preprocess_image(image_bytes):
     img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
@@ -47,6 +48,7 @@ def preprocess_image(image_bytes):
     img = img[np.newaxis, ...]
     return Tensor(img, ms.float32)
 
+
 # --- Prediction REST ---
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
@@ -54,29 +56,28 @@ async def predict(file: UploadFile = File(...)):
     input_data = preprocess_image(image_bytes)
     net.set_train(False)
     output = net(input_data)
+    predicted_class = int(np.argmax(output.asnumpy()))
+    return {"class": predicted_class, "class_name": rock_classes[predicted_class]}
 
-    # softmax to get probabilities
-    probabilities = ops.Softmax()(output).asnumpy()
-    predicted_class = int(np.argmax(probabilities))
-    confidence = float(probabilities[0][predicted_class])
-    return {
-        "class": predicted_class,
-        "class_name": rock_classes[predicted_class],
-        "confidence": confidence
-    }
 
 # --- Change Model REST ---
 @app.post("/change_model")
 async def change_model(ckpt_path: str = Form(...)):
+    # 1. Check file existence
     if not os.path.isfile(ckpt_path):
         return {"status": "error", "message": "File does not exist."}
+
+    # 2. Check file extension
     if not ckpt_path.endswith(".ckpt"):
-        return {"status": "error", "message": "Invalid file type. Only .ckpt allowed."}
+        return {"status": "error", "message": "Invalid file type. Only .ckpt files allowed."}
+
+    # 3. Try loading the model
     try:
-        load_model(ckpt_path)
+        load_model(ckpt_path)  # your existing function that loads MindSpore checkpoint
         return {"status": "success", "message": f"Model changed to {ckpt_path}"}
     except Exception as e:
         return {"status": "error", "message": f"Failed to load checkpoint: {str(e)}"}
+
 
 # --- WebSocket ---
 @app.websocket("/ws")
@@ -89,18 +90,12 @@ async def websocket_endpoint(websocket: WebSocket):
             input_data = preprocess_image(image_data)
             net.set_train(False)
             output = net(input_data)
-
-            # softmax for probabilities
-            probabilities = ops.Softmax()(output).asnumpy()
-            predicted_class = int(np.argmax(probabilities))
-            confidence = float(probabilities[0][predicted_class])
+            predicted_class = int(np.argmax(output.asnumpy()))
             predicted_class_str = rock_classes[predicted_class]
-
             await websocket.send_text(json.dumps({
                 "type": "prediction",
                 "class": predicted_class_str,
-                "class_index": predicted_class,
-                "confidence": confidence
+                "class_index": predicted_class
             }))
     except WebSocketDisconnect:
         pass
